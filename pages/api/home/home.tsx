@@ -538,7 +538,7 @@ const Home = ({
                 }
               />
             )}
-            <Promptbar />
+            {/* <Promptbar /> */}
           </div>
         </main>
       )}
