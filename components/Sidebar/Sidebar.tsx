@@ -1,4 +1,9 @@
-import { IconFolderPlus, IconMistOff, IconPlus, IconArticle } from '@tabler/icons-react';
+import {
+  IconArticle,
+  IconFolderPlus,
+  IconMistOff,
+  IconPlus,
+} from '@tabler/icons-react';
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -58,7 +63,15 @@ const Sidebar = <T,>({
     <>
       <div>
         <div
-          className={`fixed top-0 ${side}-0 z-40 flex h-full ${isOpen ? "translate-x-0 w-[260px] p-2" : "-translate-x-[260px] w-0"} flex-none flex-col space-y-2 text-[14px] transition-all ease-in-out sm:relative sm:top-0`}
+          className={`fixed top-0 ${side}-0 z-40 flex h-full ${
+            isOpen
+              ? 'translate-x-0 w-[260px] p-2'
+              : `${
+                  side === 'left'
+                    ? '-translate-x-[260px]'
+                    : 'translate-x-[260px]'
+                } w-0`
+          } flex-none flex-col space-y-2 text-[14px] transition-all ease-in-out sm:relative sm:top-0`}
         >
           <div className="flex items-center">
             <button
@@ -115,7 +128,16 @@ const Sidebar = <T,>({
           </div>
           {footerComponent}
         </div>
-        <IconArticle className={`fixed ${isOpen ? "left-[265px]" : "left-[5px]" } top-2 z-30 text-white transition-all ease-in-out cursor-pointer`} onClick={toggleOpen}/>
+        <IconArticle
+          id={`${side}`}
+          className={`fixed ${
+            isOpen && side === 'left' ? 'left-[265px]' : ''
+          } ${!isOpen && side === 'left' ? 'left-[5px]' : ''} ${
+            isOpen && side === 'right' ? 'right-[265px]' : ''
+          } ${!isOpen && side === 'right' ? 'right-[5px]' : ''} 
+          top-2 z-30 text-white transition-all ease-in-out cursor-pointer`}
+          onClick={toggleOpen}
+        />
       </div>
     </>
   );
