@@ -39,6 +39,20 @@ export default function Document(props: Props) {
         <script type="text/javascript" async src="http://resources.infolinks.com/js/infolinks_main.js"/>
         </>
         )}
+        {/* Sovrn ads code */}
+        <script type="text/javascript"
+          dangerouslySetInnerHTML={{
+            __html: `
+              var vglnk = {key: '7f3162d84373048fa59d94b031bbddc5'};
+              (function(d, t) {var s = d.createElement(t);
+                s.type = 'text/javascript';s.async = true;
+                s.src = '//clickcdn.sovrn.com/api/sovrncm.js';
+                var r = d.getElementsByTagName(t)[0];
+                r.parentNode.insertBefore(s, r);
+              }(document, 'script'));
+            `,
+          }}
+        />
       </body>
     </Html>
   );
