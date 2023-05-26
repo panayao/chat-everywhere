@@ -1,5 +1,5 @@
 import { DocumentProps, Head, Html, Main, NextScript } from 'next/document';
-
+import Script from 'next/script';
 import i18nextConfig from '../next-i18next.config';
 
 type Props = DocumentProps & {
@@ -31,18 +31,24 @@ export default function Document(props: Props) {
         {/* Ad Verification tag for Infolinks*/}
         {process.env.NEXT_PUBLIC_ENV === 'production' && (
         <>
-          <script type="text/javascript"
-              dangerouslySetInnerHTML={{
-                __html: `
-                  var infolinks_pid = 3395445;
-                  var infolinks_wsid = 0;
-                `
-              }}
-            />
-          <script type="text/javascript" async src="http://resources.infolinks.com/js/infolinks_main.js"/>
+          <Script 
+            type="text/javascript"
+            id="show-banner"
+            strategy="lazyOnload"
+            dangerouslySetInnerHTML={{
+              __html: `
+                var infolinks_pid = 3395445;
+                var infolinks_wsid = 0;
+              `
+            }}
+          />
+          <Script type="text/javascript" async src="http://resources.infolinks.com/js/infolinks_main.js"/>
         
           {/* Sovrn ads code for Affiliate Links */}
-          <script type="text/javascript"
+          <Script 
+            type="text/javascript"
+            id="show-banner"
+            strategy="lazyOnload"
             dangerouslySetInnerHTML={{
               __html: `
                 var vglnk = {key: '${sovrnAdsKey}'};
