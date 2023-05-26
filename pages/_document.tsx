@@ -6,6 +6,9 @@ type Props = DocumentProps & {
   // add custom document props
 };
 
+//Sovrn Ads Key
+const sovrnAdsKey= process.env.NEXT_PUBLIC_SOVRN_ADS_KEY || '';
+
 export default function Document(props: Props) {
   const currentLocale =
     props.__NEXT_DATA__.locale ?? i18nextConfig.i18n.defaultLocale;
@@ -28,31 +31,32 @@ export default function Document(props: Props) {
         {/* Ad Verification tag for Infolinks*/}
         {process.env.NEXT_PUBLIC_ENV === 'production' && (
         <>
-        <script type="text/javascript"
+          <script type="text/javascript"
+              dangerouslySetInnerHTML={{
+                __html: `
+                  var infolinks_pid = 3395445;
+                  var infolinks_wsid = 0;
+                `
+              }}
+            />
+          <script type="text/javascript" async src="http://resources.infolinks.com/js/infolinks_main.js"/>
+        
+          {/* Sovrn ads code for Affiliate Links */}
+          <script type="text/javascript"
             dangerouslySetInnerHTML={{
               __html: `
-                var infolinks_pid = 3395445;
-                var infolinks_wsid = 0;
-              `
+                var vglnk = {key: '${sovrnAdsKey}'};
+                (function(d, t) {var s = d.createElement(t);
+                  s.type = 'text/javascript';s.async = true;
+                  s.src = '//clickcdn.sovrn.com/api/sovrncm.js';
+                  var r = d.getElementsByTagName(t)[0];
+                  r.parentNode.insertBefore(s, r);
+                }(document, 'script'));
+              `,
             }}
           />
-        <script type="text/javascript" async src="http://resources.infolinks.com/js/infolinks_main.js"/>
         </>
         )}
-        {/* Sovrn ads code */}
-        <script type="text/javascript"
-          dangerouslySetInnerHTML={{
-            __html: `
-              var vglnk = {key: '7f3162d84373048fa59d94b031bbddc5'};
-              (function(d, t) {var s = d.createElement(t);
-                s.type = 'text/javascript';s.async = true;
-                s.src = '//clickcdn.sovrn.com/api/sovrncm.js';
-                var r = d.getElementsByTagName(t)[0];
-                r.parentNode.insertBefore(s, r);
-              }(document, 'script'));
-            `,
-          }}
-        />
       </body>
     </Html>
   );
