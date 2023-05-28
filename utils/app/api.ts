@@ -3,6 +3,7 @@ import { DEFAULT_SYSTEM_PROMPT, DEFAULT_TEMPERATURE } from '@/utils/app/const';
 import { Conversation } from '@/types/chat';
 import { OpenAIModels } from '@/types/openai';
 import { Plugin, PluginID } from '@/types/plugin';
+import dayjs from 'dayjs';
 
 export const getEndpoint = (plugin: Plugin | null) => {
   if (!plugin) {
@@ -15,6 +16,10 @@ export const getEndpoint = (plugin: Plugin | null) => {
 
   if (plugin.id === PluginID.GPT4) {
     return 'api/chat-gpt4';
+  }
+
+  if (plugin.id === PluginID.IMAGE_GEN) {
+    return 'api/image-gen';
   }
 
   return 'api/chat';
@@ -46,6 +51,7 @@ export async function fetchShareableConversation(
       prompt: DEFAULT_SYSTEM_PROMPT,
       folderId: null,
       temperature: DEFAULT_TEMPERATURE,
+      lastUpdateAtUTC: dayjs().valueOf(),
     };
   } catch (error) {
     console.error(error);

@@ -9,6 +9,8 @@ import {
 
 import { cleanConversationHistory } from './clean';
 
+import dayjs from 'dayjs';
+
 export function isExportFormatV1(obj: any): obj is ExportFormatV1 {
   return Array.isArray(obj);
 }
@@ -45,6 +47,7 @@ export function cleanData(data: SupportedExportFormats): LatestExportFormat {
         id: chatFolder.id.toString(),
         name: chatFolder.name,
         type: 'chat',
+        lastUpdateAtUTC: dayjs().valueOf(),
       })),
       prompts: [],
     };
@@ -73,20 +76,11 @@ export const getExportableData = (): LatestExportFormat => {
   const folders = localStorage.getItem('folders');
   const prompts = localStorage.getItem('prompts');
 
-  if (history) {
-    return {
-      version: 4,
-      history: JSON.parse(history),
-      folders: folders ? JSON.parse(folders) : [],
-      prompts: prompts ? JSON.parse(prompts) : [],
-    };
-  }
-
   return {
     version: 4,
-    history: [],
-    folders: [],
-    prompts: [],
+    history: history ? JSON.parse(history) : [],
+    folders: folders ? JSON.parse(folders) : [],
+    prompts: prompts ? JSON.parse(prompts) : [],
   };
 };
 
@@ -119,7 +113,7 @@ export const exportData = () => {
   });
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
-  link.download = `chatbot_ui_history_${currentDate()}.json`;
+  link.download = `chateverywhere_history_${currentDate()}.json`;
   link.href = url;
   link.style.display = 'none';
   document.body.appendChild(link);

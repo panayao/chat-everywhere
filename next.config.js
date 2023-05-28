@@ -13,6 +13,10 @@ const nextConfig = {
 
     return config;
   },
+
+  images: {
+    domains: ['localhost', 'gdldiwtaingbnreeyuoj.supabase.co', 'tlzqgrjdkmblgtbmalki.supabase.co', 'cdn.discordapp.com']
+  },
 };
 
 module.exports = nextConfig;
