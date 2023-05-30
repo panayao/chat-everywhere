@@ -22,8 +22,8 @@ export const useFetchCreditUsage = () => {
       .select('*')
       .eq('user_id', userId)
     
-    const gpt4Credits = (data?.find((creditRow) => creditRow.api_type === PluginID.GPT4)?.balance || 0) as number;
-    const imageGenCredits = (data?.find((creditRow) => creditRow.api_type === PluginID.IMAGE_GEN)?.balance || 0) as number;
+    const gpt4Credits = data?.find((creditRow) => creditRow.api_type === PluginID.GPT4)?.balance || null;
+    const imageGenCredits = data?.find((creditRow) => creditRow.api_type === PluginID.IMAGE_GEN)?.balance || null;
 
     if (error) {
       console.error(error);
