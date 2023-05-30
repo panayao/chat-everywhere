@@ -48,7 +48,6 @@ const handler = async (req: Request): Promise<Response> => {
     if (!promptToSend) {
       promptToSend = DEFAULT_SYSTEM_PROMPT;
     }
-    
     let temperatureToUse = temperature;
     if (temperatureToUse == null) {
       temperatureToUse = DEFAULT_TEMPERATURE;
@@ -68,9 +67,8 @@ const handler = async (req: Request): Promise<Response> => {
       }`;
     }
 
-    addUsageEntry(PluginID.GPT4, data.user.id);
-    subtractCredit(data.user.id, PluginID.GPT4);
-
+    await addUsageEntry(PluginID.GPT4, data.user.id);
+    await subtractCredit(data.user.id, PluginID.GPT4);
     // Only enable GPT-4 in production
     const modelToUse =
       process.env.NEXT_PUBLIC_ENV === 'production'

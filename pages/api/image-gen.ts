@@ -171,7 +171,6 @@ const handler = async (req: Request): Promise<Response> => {
           await imageGenerationProgressResponse.json();
 
         const generationProgress = imageGenerationProgressResponseJson.progress;
-        
         if (generationProgress === 100) {
           const generationLengthInSecond = Math.round(
             (Date.now() - generationStartedAt) / 1000,
@@ -182,8 +181,9 @@ const handler = async (req: Request): Promise<Response> => {
           writeToStream(
             `![Generated Image](${imageGenerationProgressResponseJson.response.imageUrl}) \n`,
           );
-          addUsageEntry(PluginID.IMAGE_GEN, user.id);
-          subtractCredit(user.id, PluginID.IMAGE_GEN);
+          await addUsageEntry(PluginID.IMAGE_GEN, user.id);
+          await subtractCredit(user.id, PluginID.IMAGE_GEN);
+
           imageGenerationProgress = 100;
 
           await writeToStream('[DONE]');
