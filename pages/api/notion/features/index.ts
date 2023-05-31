@@ -1,11 +1,11 @@
 import { NextRequest } from 'next/server';
 
-import { ChatEverywhereNews } from '@/types/notion';
+import { ChatEverywhereFeatures } from '@/types/notion';
 
 import { Client } from '@notionhq/client';
 import { QueryDatabaseParameters } from '@notionhq/client/build/src/api-endpoints';
 
-const newsDatabaseID = process.env.NOTION_NEWS_DATABASE_ID as string;
+const featuresDatabaseID = process.env.NOTION_FEATURES_DATABASE_ID as string;
 const notionKey = process.env.NOTION_SECRET_KEY as string;
 const client = new Client({ auth: notionKey });
 
@@ -21,51 +21,55 @@ const handler = async (req: NextRequest): Promise<Response> => {
     });
   }
 
-  const startCursor = req.nextUrl.searchParams.get('startCursor');
+  const url = new URL(req.nextUrl);
+  const { lang } = Object.fromEntries(url.searchParams.entries());
 
-  const query = {
-    database_id: newsDatabaseID,
-    page_size: 15,
+  const databaseQuery = {
+    database_id: featuresDatabaseID,
     sorts: [
       {
-        property: 'Created time',
-        direction: 'descending',
+        property: 'Tier',
+        direction: 'ascending',
       },
     ],
     filter: {
       property: 'Status',
       status: {
-        equals: 'Published',
+        equals: lang === 'zh' ? 'Published-zh' : 'Published',
       },
     },
   } as unknown as QueryDatabaseParameters;
 
-  if (startCursor) {
-    query.start_cursor = startCursor as string;
-  }
-
   try {
-    const response = await client.databases.query(query);
+    const response = await client.databases.query(databaseQuery);
     const results = response.results;
 
     const responsePayload = {
-      newsList: results
+      featuresList: results
         .map((page) => {
-          if (
-            'properties' in page &&
+          const hasProperties = 'properties' in page;
+          const hasName =
+            hasProperties &&
             'Name' in page.properties &&
-            'title' in page.properties.Name
-          ) {
+            'title' in page.properties.Name;
+          const hasTier =
+            hasProperties &&
+            'Tier' in page.properties &&
+            'multi_select' in page.properties.Tier;
+
+          if (hasProperties && hasName && hasTier) {
             return {
               id: page.id,
-              title: page.properties.Name.title[0].plain_text,
-              createdTime: page.created_time,
+              title: (page.properties.Name as any).title[0].plain_text,
+              lastEditedTime: page.last_edited_time,
+              tier: (page.properties.Tier as any).multi_select.map(
+                (tier: any) => tier.name,
+              ),
             };
           }
           return null;
         })
-        .filter((page) => page !== null) as ChatEverywhereNews[],
-      nextCursor: response.next_cursor,
+        .filter((page) => page !== null) as ChatEverywhereFeatures[],
     };
 
     return new Response(JSON.stringify(responsePayload), {

@@ -20,7 +20,7 @@ export default async function handler(
   const api = new NotionAPI();
   try {
     const recordMap = await api.getPage(id as string);
-
+    res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate');
     res.status(200).json({
       recordMap,
     });

@@ -1,112 +1,59 @@
 import { Dialog, Transition } from '@headlessui/react';
 import { IconX } from '@tabler/icons-react';
-import React, {
-  Fragment,
-  memo,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React, { Fragment, memo, useEffect, useRef, useState } from 'react';
 
 import { useTranslation } from 'next-i18next';
 
-import { ChatEverywhereNews } from '@/types/notion';
+import { ChatEverywhereFeatures } from '@/types/notion';
 
 import Spinner from '../Spinner/Spinner';
-import NewsPage from './NewsPage';
+import FeaturesPage from './FeaturePage';
+import TierTag from './TierTag';
 
 import dayjs from 'dayjs';
-import relativeTime from 'dayjs/plugin/relativeTime';
-
-dayjs.extend(relativeTime);
 
 function formatDatetime(dateString: string) {
-  return dayjs(dateString).fromNow();
+  return dayjs(dateString).format('YYYY/MM/DD' + ' ' + 'HH:mm');
 }
 
 type Props = {
   className?: string;
   open: boolean;
-  onOpen: () => void;
   onClose: () => void;
 };
 
-const NewsModel = memo(({ className = '', open, onOpen, onClose }: Props) => {
-  const { t } = useTranslation('news');
+const FeaturesModel = memo(({ className = '', open, onClose }: Props) => {
+  const { t } = useTranslation('features');
 
-  const [newsList, setNewsList] = useState<ChatEverywhereNews[]>([]);
-  const [nextCursor, setNextCursor] = useState<string | null>(null);
+  const [featuresList, setFeaturesList] = useState<ChatEverywhereFeatures[]>(
+    [],
+  );
   const observerRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [selectPageId, setSelectedPageId] = useState<string | null>(null);
-  const latestNewsId = useMemo(() => newsList[0]?.id, [newsList]);
 
-  const fetchMoreNews = useCallback(async (nextCursor?: string) => {
+  const changeSelectPageId = (pageId: string) => {
+    setSelectedPageId(pageId);
+  };
+
+  const { i18n } = useTranslation();
+
+  const fetchLatestFeatures = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch(
-        `/api/notion/news?startCursor=${nextCursor || ''}`,
-      );
-      const { newsList, nextCursor: newNextCursor } = await response.json();
-      setNewsList((prevNewsList) => {
-        const newList = [...prevNewsList, ...(newsList || [])];
-
-        // remove duplicate by its id in the list, avoid confusion when in dev mode
-        const uniqueList = newList.filter(
-          (news, index, self) =>
-            index === self.findIndex((t) => t.id === news.id),
-        );
-
-        return uniqueList;
-      });
-      setNextCursor(newNextCursor);
+      const url = new URL('/api/notion/features', window.location.origin);
+      if (/^zh/.test(i18n.language)) url.searchParams.append('lang', 'zh');
+      const response = await fetch(url);
+      const { featuresList } = await response.json();
+      setFeaturesList(featuresList);
     } finally {
       setIsLoading(false);
     }
+  };
+
+  useEffect(() => {
+    fetchLatestFeatures();
   }, []);
-
-  useEffect(() => {
-    if (!latestNewsId) return;
-
-    const latestNewsIdInLocalStorage = readLatestNewsIdFromLocalStorage();
-    if (latestNewsId !== latestNewsIdInLocalStorage) {
-      onOpen();
-      storeLatestNewsIdToLocalStorage(latestNewsId);
-    }
-  }, [latestNewsId, onOpen]);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && !isLoading && nextCursor) {
-          fetchMoreNews(nextCursor);
-        }
-      },
-      { rootMargin: '0px 0px 100% 0px' }, // trigger when element is 100% visible
-    );
-
-    if (observerRef.current) {
-      observer.observe(observerRef.current);
-    }
-
-    return () => {
-      if (observerRef.current) {
-        observer.unobserve(observerRef.current);
-      }
-    };
-  }, [fetchMoreNews, isLoading, nextCursor]);
-
-  useEffect(() => {
-    fetchMoreNews(undefined);
-  }, [fetchMoreNews]);
-
-  useEffect(() => {
-    if (open && newsList.length > 0) {
-      setSelectedPageId(newsList[0].id);
-    }
-  }, [newsList, open]);
 
   return (
     <Transition appear show={open} as={Fragment}>
@@ -142,7 +89,7 @@ const NewsModel = memo(({ className = '', open, onOpen, onClose }: Props) => {
             >
               <Dialog.Panel className="w-full max-w-3xl tablet:max-w-[90vw] h-[80vh] transform overflow-hidden rounded-2xl p-6 text-left align-middle shadow-xl transition-all bg-neutral-800 text-neutral-200 grid grid-rows-[max-content_1fr] mobile:h-screen mobile:!max-w-[unset] mobile:!rounded-none">
                 <div className="mb-3 flex flex-row justify-between items-center">
-                  <h1>{t('Latest Updates')}</h1>
+                  <h1>{t('Feature Introduction')}</h1>
 
                   {!selectPageId ? (
                     <button className="w-max min-h-[34px]" onClick={onClose}>
@@ -161,25 +108,41 @@ const NewsModel = memo(({ className = '', open, onOpen, onClose }: Props) => {
                 <ul
                   className={`${
                     selectPageId || isLoading ? 'hidden' : ''
-                  } overflow-y-auto cursor-pointer`}
+                  } overflow-y-auto list-outside list-disc cursor-pointer`}
                 >
-                  {newsList.map((news, index) => (
+                  {featuresList.map((featureItem, index) => (
                     <li
                       className="mb-3 hover:bg-black/50 p-3 rounded-md"
-                      key={`${news.id} ${index}`}
-                      onClick={() => setSelectedPageId(news.id)}
+                      key={`${featureItem.id} ${index}`}
+                      onClick={() => setSelectedPageId(featureItem.id)}
                     >
-                      <h3 className="text-sm font-medium leading-5">
-                        {news.title}
-                      </h3>
-                      <p>{formatDatetime(news.createdTime)}</p>
+                      <div className="flex gap-2 justify-between">
+                        <h3 className="text-sm font-medium leading-5">
+                          {featureItem.title}{' '}
+                          {featureItem.tier.length > 0 &&
+                            featureItem.tier.map((tier) => (
+                              <TierTag
+                                key={`${featureItem.id} ${index} ${tier}`}
+                                tier={tier}
+                              />
+                            ))}
+                        </h3>
+                        <label className="italic text-sm">
+                          {formatDatetime(featureItem.lastEditedTime)}
+                        </label>
+                      </div>
                     </li>
                   ))}
 
                   <div className="h-1" ref={observerRef}></div>
                 </ul>
 
-                {selectPageId && <NewsPage pageId={selectPageId} />}
+                {selectPageId && (
+                  <FeaturesPage
+                    pageId={selectPageId}
+                    internalLinkOnClick={changeSelectPageId}
+                  />
+                )}
                 {isLoading && (
                   <div className="flex mt-[50%]">
                     <Spinner size="16px" className="mx-auto" />
@@ -194,14 +157,6 @@ const NewsModel = memo(({ className = '', open, onOpen, onClose }: Props) => {
   );
 });
 
-NewsModel.displayName = 'NewsModel';
+FeaturesModel.displayName = 'FeaturesModel ';
 
-export default NewsModel;
-
-function storeLatestNewsIdToLocalStorage(id: string) {
-  localStorage.setItem('latestNewsId', id);
-}
-
-function readLatestNewsIdFromLocalStorage() {
-  return localStorage.getItem('latestNewsId');
-}
+export default FeaturesModel;
