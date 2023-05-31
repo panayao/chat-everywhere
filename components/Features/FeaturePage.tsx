@@ -5,6 +5,7 @@ import Spinner from '../Spinner/Spinner';
 import TierTag from './TierTag';
 
 import { ExtendedRecordMap } from 'notion-types';
+import { parsePageId } from 'notion-utils';
 
 interface Props {
   pageId: string;
@@ -23,7 +24,7 @@ function FeaturePage({ pageId, internalLinkOnClick }: Props) {
   const getPageTitle = (recordMap: ExtendedRecordMap) => {
     if (!recordMap) return '';
     const blockId = Object.keys(recordMap.block).find((key) => {
-      return key.replace(/-/g, '') === pageId.replace(/-/g, '');
+      return parsePageId(key) === parsePageId(pageId);
     });
     if (!blockId) return '';
     return recordMap?.block[blockId]?.value?.properties?.title[0][0] || '';
@@ -64,18 +65,14 @@ function FeaturePage({ pageId, internalLinkOnClick }: Props) {
             Collection: () => {
               return <></>;
             },
-
             PageLink: ({ ...props }) => {
               return (
                 <a
                   {...props}
                   onClick={(e) => {
                     e.preventDefault();
-                    let id = props.href;
-                    if (props.href.charAt(0) === '/') {
-                      id = props.href.substring(1);
-                    }
-                    internalLinkOnClick(id);
+                    const id = props.href;
+                    internalLinkOnClick(parsePageId(id));
                   }}
                 />
               );
