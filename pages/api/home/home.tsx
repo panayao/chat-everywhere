@@ -100,7 +100,7 @@ const Home = ({
       conversationLastSyncAt,
       forceSyncConversation,
       replaceRemoteData,
-      messageIsStreaming
+      messageIsStreaming,
     },
     dispatch,
   } = contextValue;
@@ -187,7 +187,6 @@ const Home = ({
         return {
           ...c,
           folderId: null,
-          deleted: true,
         };
       }
 
@@ -202,7 +201,6 @@ const Home = ({
         return {
           ...p,
           folderId: null,
-          deleted: true,
         };
       }
 
@@ -212,14 +210,6 @@ const Home = ({
     dispatch({ field: 'prompts', value: updatedPrompts });
     savePrompts(updatedPrompts);
     updateConversationLastUpdatedAtTimeStamp();
-
-    const updatedSelectedConversation = updatedConversations.find(
-      (c) => c.id === selectedConversation?.id,
-    );
-    if (updatedSelectedConversation?.deleted) {
-      const newConversation: Conversation = getNewConversationName();
-      dispatch({ field: 'selectedConversation', value: newConversation });
-    }
   };
 
   const handleUpdateFolder = (folderId: string, name: string) => {
@@ -252,7 +242,7 @@ const Home = ({
 
     const lastConversation = conversations[conversations.length - 1];
 
-    const newConversation: Conversation = getNewConversationName();
+    const newConversation: Conversation = getNewConversation();
 
     const updatedConversations = [...conversations, newConversation];
 
@@ -288,7 +278,7 @@ const Home = ({
     });
   };
 
-  const getNewConversationName = () => {
+  const getNewConversation = () => {
     const lastConversation = conversations[conversations.length - 1];
 
     const newConversation: Conversation = {
@@ -329,7 +319,7 @@ const Home = ({
   // CLOUD SYNC ------------------------------------------
 
   useEffect(() => {
-    if(messageIsStreaming) return;
+    if (messageIsStreaming) return;
     if (!user) return;
     if (!isPaidUser) return;
 
