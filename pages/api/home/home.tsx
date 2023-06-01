@@ -187,6 +187,7 @@ const Home = ({
         return {
           ...c,
           folderId: null,
+          deleted: true,
         };
       }
 
@@ -201,6 +202,7 @@ const Home = ({
         return {
           ...p,
           folderId: null,
+          deleted: true,
         };
       }
 
