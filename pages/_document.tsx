@@ -1,10 +1,13 @@
 import { DocumentProps, Head, Html, Main, NextScript } from 'next/document';
-
+import Script from 'next/script';
 import i18nextConfig from '../next-i18next.config';
 
 type Props = DocumentProps & {
   // add custom document props
 };
+
+//Sovrn Ads Key
+const sovrnAdsKey= process.env.NEXT_PUBLIC_SOVRN_ADS_KEY || '';
 
 export default function Document(props: Props) {
   const currentLocale =
@@ -28,7 +31,10 @@ export default function Document(props: Props) {
         {/* Ad Verification tag for Infolinks*/}
         {process.env.NEXT_PUBLIC_ENV === 'production' && (
         <>
-        <script type="text/javascript"
+          <Script 
+            type="text/javascript"
+            id="show-banner"
+            strategy="lazyOnload"
             dangerouslySetInnerHTML={{
               __html: `
                 var infolinks_pid = 3395445;
@@ -36,7 +42,25 @@ export default function Document(props: Props) {
               `
             }}
           />
-        <script type="text/javascript" async src="http://resources.infolinks.com/js/infolinks_main.js"/>
+          <Script type="text/javascript" async src="http://resources.infolinks.com/js/infolinks_main.js"/>
+        
+          {/* Sovrn ads code for Affiliate Links */}
+          <Script 
+            type="text/javascript"
+            id="show-banner"
+            strategy="lazyOnload"
+            dangerouslySetInnerHTML={{
+              __html: `
+                var vglnk = {key: '${sovrnAdsKey}'};
+                (function(d, t) {var s = d.createElement(t);
+                  s.type = 'text/javascript';s.async = true;
+                  s.src = '//clickcdn.sovrn.com/api/sovrncm.js';
+                  var r = d.getElementsByTagName(t)[0];
+                  r.parentNode.insertBefore(s, r);
+                }(document, 'script'));
+              `,
+            }}
+          />
         </>
         )}
       </body>

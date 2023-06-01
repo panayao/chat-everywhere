@@ -16,8 +16,6 @@ import {
 import { ChatBody } from '@/types/chat';
 import { PluginID } from '@/types/plugin';
 
-import dayjs from 'dayjs';
-
 const supabase = getAdminSupabaseClient();
 
 export const config = {
@@ -150,12 +148,15 @@ const handler = async (req: Request): Promise<Response> => {
       let generationStartedAt = Date.now();
       let imageGenerationProgress = null;
 
+      const getTotalGenerationTime = () =>
+        Math.round((Date.now() - generationStartedAt) / 1000);
+
       while (
         !jobTerminated &&
         (Date.now() - generationStartedAt < MAX_TIMEOUT * 1000 ||
           imageGenerationProgress < 100)
       ) {
-        await sleep(4000);
+        await sleep(3500);
         const imageGenerationProgressResponse = await fetch(
           `https://api.thenextleg.io/v2/message/${imageGenerationMessageId}?authToken=${process.env.THE_NEXT_LEG_API_KEY}`,
           { method: 'GET' },
@@ -173,17 +174,15 @@ const handler = async (req: Request): Promise<Response> => {
         const generationProgress = imageGenerationProgressResponseJson.progress;
         
         if (generationProgress === 100) {
-          const generationLengthInSecond = Math.round(
-            (Date.now() - generationStartedAt) / 1000,
-          );
-          writeToStream(`Completed in ${generationLengthInSecond}s\n`);
+          writeToStream(`Completed in ${getTotalGenerationTime()}s \n`);
           writeToStream('``` \n');
 
           writeToStream(
             `![Generated Image](${imageGenerationProgressResponseJson.response.imageUrl}) \n`,
           );
-          addUsageEntry(PluginID.IMAGE_GEN, user.id);
-          subtractCredit(user.id, PluginID.IMAGE_GEN);
+          await addUsageEntry(PluginID.IMAGE_GEN, user.id);
+          await subtractCredit(user.id, PluginID.IMAGE_GEN);
+
           imageGenerationProgress = 100;
 
           await writeToStream('[DONE]');
@@ -191,16 +190,14 @@ const handler = async (req: Request): Promise<Response> => {
           return;
         } else {
           if (imageGenerationProgress === null) {
-            writeToStream(
-              `Started to generate @ ${dayjs().format('hh:mm:ss')} \n`,
-            );
+            writeToStream(`Start to generate \n`);
           } else {
             writeToStream(
               `${
                 generationProgress === 0
                   ? 'Waiting to be processed'
-                  : `${generationProgress} %`
-              } ... @ ${dayjs().format('hh:mm:ss')} \n`,
+                  : `${generationProgress}% complete`
+              } ... ${getTotalGenerationTime()}s \n`,
               true,
             );
           }
