@@ -100,7 +100,7 @@ const Home = ({
       conversationLastSyncAt,
       forceSyncConversation,
       replaceRemoteData,
-      messageIsStreaming
+      messageIsStreaming,
     },
     dispatch,
   } = contextValue;
@@ -242,21 +242,7 @@ const Home = ({
 
     const lastConversation = conversations[conversations.length - 1];
 
-    const newConversation: Conversation = {
-      id: uuidv4(),
-      name: `${t('New Conversation')}`,
-      messages: [],
-      model: lastConversation?.model || {
-        id: OpenAIModels[defaultModelId].id,
-        name: OpenAIModels[defaultModelId].name,
-        maxLength: OpenAIModels[defaultModelId].maxLength,
-        tokenLimit: OpenAIModels[defaultModelId].tokenLimit,
-      },
-      prompt: DEFAULT_SYSTEM_PROMPT,
-      temperature: DEFAULT_TEMPERATURE,
-      folderId: null,
-      lastUpdateAtUTC: dayjs().valueOf(),
-    };
+    const newConversation: Conversation = getNewConversation();
 
     const updatedConversations = [...conversations, newConversation];
 
@@ -292,6 +278,27 @@ const Home = ({
     });
   };
 
+  const getNewConversation = () => {
+    const lastConversation = conversations[conversations.length - 1];
+
+    const newConversation: Conversation = {
+      id: uuidv4(),
+      name: `${t('New Conversation')}`,
+      messages: [],
+      model: lastConversation?.model || {
+        id: OpenAIModels[defaultModelId].id,
+        name: OpenAIModels[defaultModelId].name,
+        maxLength: OpenAIModels[defaultModelId].maxLength,
+        tokenLimit: OpenAIModels[defaultModelId].tokenLimit,
+      },
+      prompt: DEFAULT_SYSTEM_PROMPT,
+      temperature: DEFAULT_TEMPERATURE,
+      folderId: null,
+      lastUpdateAtUTC: dayjs().valueOf(),
+    };
+    return newConversation;
+  };
+
   // EFFECTS  --------------------------------------------
 
   useEffect(() => {
@@ -312,7 +319,7 @@ const Home = ({
   // CLOUD SYNC ------------------------------------------
 
   useEffect(() => {
-    if(messageIsStreaming) return;
+    if (messageIsStreaming) return;
     if (!user) return;
     if (!isPaidUser) return;
 
