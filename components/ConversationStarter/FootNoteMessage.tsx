@@ -14,7 +14,7 @@ export const FootNoteMessage: FC = () => {
           rel="noreferrer"
           className="underline"
         >
-          Chat Everywhere
+          PanayaoBot
         </a>{' '}
         by{' '}
         <a

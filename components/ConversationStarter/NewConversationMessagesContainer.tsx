@@ -68,7 +68,7 @@ export const NewConversationMessagesContainer: FC<Props> = ({
 
   return (
     <div className="font-normal">
-      <span className="font-semibold">Chat Everywhere</span>
+      <span className="font-semibold">PanayaoBot</span>
 
       {rolePlayMode ? (
         <RolePlayPrompts roleOnClick={roleOnClick} />

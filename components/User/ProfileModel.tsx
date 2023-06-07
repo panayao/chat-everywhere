@@ -126,7 +126,7 @@ export const ProfileModel: FC<Props> = ({ onClose }) => {
                   <div className="rounded-2xl flex flex-col">
                     <span className="text-sm mb-6">
                       {t(
-                        'As an effort to reach sustainability for Chat Everywhere, we are introducing pro plan for our users to support us and this project, so we can continue to provide you with the best feature and experience.',
+                        'As an effort to reach sustainability for PanayaoBot, we are introducing pro plan for our users to support us and this project, so we can continue to provide you with the best feature and experience.',
                       )}
                     </span>
                     <div className="flex flex-col md:flex-row justify-evenly mb-3">

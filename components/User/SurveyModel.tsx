@@ -317,7 +317,7 @@ export const SurveyModel: FC<Props> = ({ onClose }) => {
                           htmlFor="useCase"
                           className="block text-base text-stone-400 mb-2"
                         >
-                          {t('What Do You Use Chat Everywhere For?')}
+                          {t('What Do You Use PanayaoBot For?')}
                         </label>
                         {useCaseOptions.map((option) => (
                           <div key={option.value}>
@@ -373,7 +373,7 @@ export const SurveyModel: FC<Props> = ({ onClose }) => {
                           className="block text-base text-stone-400 mb-2"
                         >
                           {t(
-                            'Which Chat Everywhere features appeal to you the most?',
+                            'Which PanayaoBot features appeal to you the most?',
                           )}
                         </label>
                         {featuresOptions.map((option) => (
@@ -431,7 +431,7 @@ export const SurveyModel: FC<Props> = ({ onClose }) => {
                           className="block text-base text-stone-400 mb-2"
                         >
                           {t(
-                            'What makes Chat Everywhere your preferred choice over official ChatGPT?',
+                            'What makes PanayaoBot your preferred choice over official ChatGPT?',
                           )}
                         </label>
                         {preferredOptions.map((option) => (
