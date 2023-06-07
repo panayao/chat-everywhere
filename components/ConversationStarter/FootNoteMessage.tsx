@@ -9,7 +9,7 @@ export const FootNoteMessage: FC = () => {
     <div className="px-3 pb-3 text-center text-[12px] text-black/50 dark:text-white/50 md:px-0 md:pb-6">
       <div className="leading-5">
         <a
-          href="https://intro.chateverywhere.app"
+          href="#"
           target="_blank"
           rel="noreferrer"
           className="underline"
@@ -18,12 +18,12 @@ export const FootNoteMessage: FC = () => {
         </a>{' '}
         by{' '}
         <a
-          href="https://exploratorlabs.com"
+          href="#"
           target="_blank"
           rel="noreferrer"
           className="underline"
         >
-          Explorator Labs
+          panayao
         </a>
         .
         <br />
