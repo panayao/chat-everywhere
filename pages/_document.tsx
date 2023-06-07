@@ -19,9 +19,9 @@ export default function Document(props: Props) {
         <meta name="apple-mobile-web-app-title" content="PanayaoBot - ChatGPT for everyone"/>
         <meta property="og:title" content="PanayaoBot - ChatGPT for everyone" />
         <meta property="og:description" content="Revolutionize your ChatGPT experience with our app that boasts advanced front-end features like folder organization and easily shareable chats. Keep your conversations secured by locally storing data and enjoy collaborating with anyone from around the world, without any limitations." />
-        <meta property="og:image" content="https://mugshotbot.com/m/hxYqn5DH" />
+        <meta property="og:image" content="#" />
         <meta property="twitter:card" content="summary_large_image" />
-        <meta property="og:url" content={`https://chateverywhere.app`} />
+        <meta property="og:url" content={`https://panayaobot.vercel.app`} />
         {/* Ad Verification tag for Propellerads*/}
         <meta name="monetag" content="b0996adc439888b4590068e1e29a5696"/>
       </Head>

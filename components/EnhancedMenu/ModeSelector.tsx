@@ -17,7 +17,7 @@ const ModeSelector = () => {
 
   const currentSelectedPluginId = useMemo(() => {
     if (!currentMessage || currentMessage?.pluginId === null) {
-      return 'default';
+      return user?.plan === 'pro' ? 'GPT-4' : 'default';
     } else {
       return currentMessage.pluginId;
     }
